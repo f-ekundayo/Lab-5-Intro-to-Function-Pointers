@@ -1,3 +1,5 @@
+
+
 #include<stdio.h>
 #include<unistd.h>
 #include<stdlib.h>
@@ -24,8 +26,21 @@ typedef int (*Comparer) (const void *a, const void *b);
  */
 int my_comparer(const void *this, const void *that)
 {
-	//TODO: IMPLEMENT ME!
-	return 0;
+  const Process *p1 = (const Process *)this;
+  const Process *p2 = (const Process *)that;
+  if (p1->priority > p2->priority) {
+      return -1; 
+  } else if (p1->priority < p2->priority) {
+      return 1;
+  } else {
+      if (p1->arrival_time < p2->arrival_time) {
+          return -1; // p1 comes before p2
+      } else if (p1->arrival_time > p2->arrival_time) {
+          return 1;  // p2 comes before p1
+      } else {
+          return 0;  // They are equal in both priority and arrival time
+      }
+  }
 }
 
 int main(int argc, char *argv[])
@@ -37,9 +52,9 @@ int main(int argc, char *argv[])
 		   return 1;
 	}
 
-	/*******************/
+	/*/
 	/* Parse the input */
-	/*******************/
+	/*/
 	FILE *input_file = fopen(argv[1], "r");
 	if (!input_file) {
 		   fprintf(stderr, "Error: Invalid filepath\n");
@@ -49,9 +64,9 @@ int main(int argc, char *argv[])
 
 	Process *processes = parse_file(input_file);
 
-	/*******************/
+	/*/
 	/* sort the input  */
-	/*******************/
+	/*/
 	Comparer process_comparer = &my_comparer;
 
 #if DEBUG
@@ -65,9 +80,9 @@ int main(int argc, char *argv[])
 
 	qsort(processes, P_SIZE, sizeof(Process), process_comparer);
 
-	/**************************/
+	//
 	/* print the sorted data  */
-	/**************************/
+	//
 
 	for (int i = 0; i < P_SIZE; i++) {
 		    printf("%d (%d, %d)\n",
@@ -77,9 +92,9 @@ int main(int argc, char *argv[])
 	fflush(stdout);
 	fflush(stderr);
 
-	/************/
+	//
 	/* clean up */
-	/************/
+	//
 	free(processes);
 	fclose(input_file);
 	return 0;
